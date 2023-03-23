@@ -1,7 +1,8 @@
 package com.bobocode.cs;
 
-
-import com.bobocode.util.ExerciseNotCompletedException;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * {@link LinkedList} is a list implementation that is based on singly linked generic nodes. A node is implemented as
@@ -15,6 +16,9 @@ import com.bobocode.util.ExerciseNotCompletedException;
  * @author Serhii Hryhus
  */
 public class LinkedList<T> implements List<T> {
+    private Node<T> head;
+    private Node<T> tail;
+    private int size = 0;
 
     /**
      * This method creates a list of provided elements
@@ -24,7 +28,9 @@ public class LinkedList<T> implements List<T> {
      * @return a new list of elements the were passed as method parameters
      */
     public static <T> LinkedList<T> of(T... elements) {
-        throw new ExerciseNotCompletedException(); // todo: implement this method
+        LinkedList<T> linkedList = new LinkedList<>();
+        Stream.of(elements).forEach(linkedList::add);
+        return linkedList;
     }
 
     /**
@@ -34,7 +40,15 @@ public class LinkedList<T> implements List<T> {
      */
     @Override
     public void add(T element) {
-        throw new ExerciseNotCompletedException(); // todo: implement this method
+        Node<T> newNode = new Node<>(element);
+        if (size == 0) {
+            head = newNode;
+            tail = head;
+        } else {
+            tail.next = newNode;
+            tail = tail.next;
+        }
+        size++;
     }
 
     /**
@@ -46,7 +60,26 @@ public class LinkedList<T> implements List<T> {
      */
     @Override
     public void add(int index, T element) {
-        throw new ExerciseNotCompletedException(); // todo: implement this method
+        if (index > size || index < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (size == 0 || index == size) {
+            add(element);
+        } else if (index == 0) {
+            Node<T> node = new Node<>(element);
+            node.next = head;
+            head = node;
+            size++;
+        } else {
+            Node<T> previous = head;
+            for (int i = 1; i < index; i++) {
+                previous = previous.next;
+            }
+            Node<T> current = new Node<>(element);
+            current.next = previous.next;
+            previous.next = current;
+            size++;
+        }
     }
 
     /**
@@ -58,7 +91,18 @@ public class LinkedList<T> implements List<T> {
      */
     @Override
     public void set(int index, T element) {
-        throw new ExerciseNotCompletedException(); // todo: implement this method
+        if (index >= size || index < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+        Node<T> previous = null;
+        Node<T> current = head;
+        for (int i = 0; i < index; i++) {
+            previous = current;
+            current = current.next;
+        }
+        Node<T> node = new Node<>(element);
+        previous.next = node;
+        node.next = current.next;
     }
 
     /**
@@ -70,29 +114,40 @@ public class LinkedList<T> implements List<T> {
      */
     @Override
     public T get(int index) {
-        throw new ExerciseNotCompletedException(); // todo: implement this method
+        Objects.checkIndex(index, size);
+        Node<T> node = head;
+        for (int i = 1; i <= index; i++) {
+            node = node.next;
+        }
+        return node.value;
     }
 
     /**
      * Returns the first element of the list. Operation is performed in constant time O(1)
      *
      * @return the first element of the list
-     * @throws java.util.NoSuchElementException if list is empty
+     * @throws NoSuchElementException if list is empty
      */
     @Override
     public T getFirst() {
-        throw new ExerciseNotCompletedException(); // todo: implement this method
+        if (isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        return head.value;
     }
 
     /**
      * Returns the last element of the list. Operation is performed in constant time O(1)
      *
      * @return the last element of the list
-     * @throws java.util.NoSuchElementException if list is empty
+     * @throws NoSuchElementException if list is empty
      */
     @Override
     public T getLast() {
-        throw new ExerciseNotCompletedException(); // todo: implement this method
+        if (isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        return tail.value;
     }
 
     /**
@@ -104,7 +159,27 @@ public class LinkedList<T> implements List<T> {
      */
     @Override
     public T remove(int index) {
-        throw new ExerciseNotCompletedException(); // todo: implement this method
+        Objects.checkIndex(index, size);
+        T value = null;
+        if (index == 0) {
+            value = head.value;;
+            head = head.next;
+        } else {
+            Node<T> previous = head;
+            for (int i = 1; i < index; i++) {
+                previous = previous.next;
+            }
+            value = previous.next.value;
+            if (index == size - 1) {
+                tail = previous;
+            }
+            previous.next = previous.next.next;
+        }
+        if (head == null) {
+            tail = null;
+        }
+        size--;
+        return value;
     }
 
 
@@ -115,7 +190,17 @@ public class LinkedList<T> implements List<T> {
      */
     @Override
     public boolean contains(T element) {
-        throw new ExerciseNotCompletedException(); // todo: implement this method
+        if (isEmpty()) {
+            return false;
+        }
+        Node<T> node = head;
+        while (node != null) {
+            if (node.value.equals(element)) {
+                return true;
+            }
+            node = node.next;
+        }
+        return false;
     }
 
     /**
@@ -125,7 +210,7 @@ public class LinkedList<T> implements List<T> {
      */
     @Override
     public boolean isEmpty() {
-        throw new ExerciseNotCompletedException(); // todo: implement this method
+        return size == 0;
     }
 
     /**
@@ -135,7 +220,7 @@ public class LinkedList<T> implements List<T> {
      */
     @Override
     public int size() {
-        throw new ExerciseNotCompletedException(); // todo: implement this method
+        return size;
     }
 
     /**
@@ -143,6 +228,17 @@ public class LinkedList<T> implements List<T> {
      */
     @Override
     public void clear() {
-        throw new ExerciseNotCompletedException(); // todo: implement this method
+        head = null;
+        tail = null;
+        size = 0;
+    }
+
+    private static class Node<T> {
+        private T value;
+        private Node<T> next;
+
+        public Node(T value) {
+            this.value = value;
+        }
     }
 }
