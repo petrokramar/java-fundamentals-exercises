@@ -9,6 +9,12 @@ import java.util.Map;
  * key/value map, where the key is a type and the value is the maximum among all values of this type that were put.
  * <p>
  * It's based on the {@link Map} and provides an API that allows to put a value by type, and get a max value by type.
+ * <p>
+ * <p>
+ * <strong>TODO: to get the most out of your learning, <a href="https://www.bobocode.com/learn">visit our website</a></strong>
+ * <p>
+ *
+ * @author Taras Boychuk
  */
 public class HeterogeneousMaxHolder {
 
@@ -21,7 +27,7 @@ public class HeterogeneousMaxHolder {
      * If the current max value is less than a provided one, or if it's null, then a provided value gets stored and the old
      * max is returned. Otherwise, nothing new is added, and the provided value is returned.
      * <p>
-     * So technically, this method always stored the greater value and returns the smaller one.
+     * So technically, this method always stores the greater value and returns the smaller one.
      *
      * @param key   a provided value type
      * @param value a value to put
@@ -34,9 +40,9 @@ public class HeterogeneousMaxHolder {
     }
 
     /**
-     * An overloaded method put implements the same logic using a custom comparator. A given comparator is wrapped with 
-     * a null-safe comparator, considering null smaller than any non-null object. 
-     *
+     * An overloaded method put implements the same logic using a custom comparator. A given comparator is wrapped with
+     * a null-safe comparator, considering null smaller than any non-null object.
+     * <p>
      * All arguments must not be null.
      *
      * @param key        a provided value type
