@@ -53,13 +53,13 @@ public class HeterogeneousMaxHolder {
      */
 
     public <T> T put(Class<T> key, T value, Comparator<? super T> comparator) {
-        T max = (T) map.get(key);
-        if (max == null || comparator.compare(value, max) > 0) {
+        comparator = Comparator.nullsFirst(comparator);
+        T max = key.cast(map.get(key));
+        if (comparator.compare(value, max) > 0) {
             map.put(key, value);
             return max;
-        } else {
-            return value;
         }
+        return value;
     }
 
     /**
@@ -70,6 +70,6 @@ public class HeterogeneousMaxHolder {
      * @return current max value or null
      */
     public <T> T getMax(Class<T> key) {
-        return (T) map.get(key);
+        return key.cast(map.get(key));
     }
 }
